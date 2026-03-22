@@ -1,0 +1,78 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <PlatformTarget>x64</PlatformTarget>
+    <LangVersion>latest</LangVersion>
+    <OutputType>Library</OutputType>
+    <RootNamespace>IterativeSunOpt</RootNamespace>
+    <AssemblyName>IterativeSunOpt</AssemblyName>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Version>2.0.0</Version>
+    <Authors>IterativeSunOpt Team</Authors>
+    <Description>基于局部爬山算法和多指标评估体系的建筑体块智能优化 Rhino 插件</Description>
+    <Copyright>Copyright © 2024</Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutputPath>bin\Debug\</OutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutputPath>bin\Release\</OutputPath>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <DefineConstants>TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="RhinoCommon">
+      <HintPath>$(ProgramFiles)\Rhino 8\System\RhinoCommon.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Eto">
+      <HintPath>$(ProgramFiles)\Rhino 8\System\Eto.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="PluginMain.cs" />
+    <Compile Include="Evaluation\EvaluationMetrics.cs" />
+    <Compile Include="Evaluation\ExtendedMetrics.cs" />
+    <Compile Include="Optimization\MutationOperators.cs" />
+    <Compile Include="Optimization\OptimizationEngine.cs" />
+    <Compile Include="AI\AIAgentService.cs" />
+    <Compile Include="Commands\IterativeSunOptCommand.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="README.md" />
+    <Content Include="LICENSE" />
+  </ItemGroup>
+
+  <!-- 复制编译后的 DLL 到 Rhino 插件目录 -->
+  <Target Name="CopyToRhinoPlugins" AfterTargets="Build" Condition="'$(Configuration)'=='Release'">
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(AppData)\McNeel\Rhinoceros\8.0\Plug-ins\$(AssemblyName)\$(Version)" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).pdb" DestinationFolder="$(AppData)\McNeel\Rhinoceros\8.0\Plug-ins\$(AssemblyName)\$(Version)" Condition="Exists('$(OutputPath)$(AssemblyName).pdb')" />
+  </Target>
+
+  <!-- 打包目标 -->
+  <Target Name="Package" AfterTargets="Build" Condition="'$(Configuration)'=='Release'">
+    <MakeDir Directories="$(ProjectDir)..\dist" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(ProjectDir)..\dist\IterativeSunOpt-v$(Version)" />
+    <Copy SourceFiles="$(ProjectDir)README.md" DestinationFolder="$(ProjectDir)..\dist\IterativeSunOpt-v$(Version)" />
+    <Copy SourceFiles="$(ProjectDir)LICENSE" DestinationFolder="$(ProjectDir)..\dist\IterativeSunOpt-v$(Version)" Condition="Exists('$(ProjectDir)LICENSE')" />
+  </Target>
+</Project>
