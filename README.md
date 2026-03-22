@@ -192,7 +192,7 @@ MIT License
 ## 联系方式
 
 - 问题反馈：GitHub Issues
-- 邮箱：support@example.com
+- 邮箱：NSIETeam@outlook.com
 
 ---
 
